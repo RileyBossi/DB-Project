@@ -15,9 +15,9 @@ CREATE TABLE Insurance_Plans (
     plan_name VARCHAR(30) NOT NULL,
     deductible DECIMAL(10,2) NOT NULL,
     coverage_details VARCHAR(100) NOT NULL,
-    CONSTRAINT pk_insurance_plans PRIMARY KEY (plan_ID)
+    CONSTRAINT pk_insurance_plans PRIMARY KEY (plan_ID),
     CONSTRAINT chk_insurance_deductible
-        CHECK  (deductible BETWEEN 0 AND 10,000) 
+        CHECK  (deductible BETWEEN 0 AND 10000) 
 );
 
 -- Member Policies Table
@@ -33,7 +33,7 @@ CREATE TABLE Member_Policies(
     CONSTRAINT fk_member_policies_insurance_plans FOREIGN KEY (plan_ID)
         REFERENCES Insurance_Plans (plan_ID),
     CONSTRAINT uq_member_policy_pair
-        UNIQUE (policy_ID, member_ID)
+        UNIQUE (policy_ID, member_ID),
     CONSTRAINT chk_member_policies_dates
         CHECK (expiration_date > effective_date)
 );
@@ -44,7 +44,7 @@ CREATE TABLE Provider (
     provider_name VARCHAR(30) NOT NULL,
     speciality VARCHAR(50),
     provider_phone VARCHAR(10) NOT NULL,
-    provider_email VARCHAR(50) NOT NULL
+    provider_email VARCHAR(50) NOT NULL,
     CONSTRAINT pk_provider PRIMARY KEY (provider_ID)
 );
 
@@ -54,7 +54,7 @@ CREATE TABLE Employee (
     role VARCHAR(20) NOT NULL,
     name VARCHAR(30) NOT NULL, 
     login VARCHAR(50) NOT NULL,
-    CONSTRAINT pk_employee PRIMARY KEY (employee_ID)
+    CONSTRAINT pk_employee PRIMARY KEY (employee_ID),
     CONSTRAINT uq_employee_login UNIQUE (login),
     CONSTRAINT chk_employee_role
         CHECK (role IN ('Administrator', 'Claims Processor', 'Representative', 'Auditor'))
@@ -69,13 +69,13 @@ CREATE TABLE Claims (
     employee_ID INTEGER NOT NULL,
     claim_date DATE NOT NULL,
     amount DECIMAL(10,2) NOT NULL,
-    status VARCHAR(10) NOT NULL,
+    status VARCHAR(10) NOT NULL DEFAULT 'Pending',
     CONSTRAINT pk_claims PRIMARY KEY (claim_ID),
     CONSTRAINT fk_claims_provider FOREIGN KEY (provider_ID)
         REFERENCES Provider (provider_ID),
     CONSTRAINT fk_claims_members FOREIGN KEY (member_ID)
         REFERENCES Members (member_ID),
-    CONSTRAINT fk_claims_policy FOREIGN KEY (policy_ID)
+    CONSTRAINT fk_claims_policy FOREIGN KEY (policy_ID, member_ID)
         REFERENCES Member_Policies (policy_id, member_ID),
     CONSTRAINT fk_claims_employee FOREIGN KEY (employee_ID)
         REFERENCES Employee (employee_ID),
